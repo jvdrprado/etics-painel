@@ -1,0 +1,16 @@
+# Mantém o painel quente: chama a rota de aquecimento a cada 10 minutos, das 7h às 21h (horário de Brasília).
+# Precisa do secret PAINEL_AQUECER_URL = https://etics-painel.vercel.app/p/<PAINEL_TOKEN>/aquecer
+name: Aquecer painel
+on:
+  schedule:
+    - cron: "*/10 10-23 * * 1-5" # 7h às 20h50 BRT (UTC-3), seg a sex
+    - cron: "0 */2 * * *" # fins de semana e madrugada: a cada 2 h
+  workflow_dispatch:
+jobs:
+  aquecer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: curl -fsS --max-time 300 "$URL" || curl -fsS --max-time 300 "$URL"
+        env:
+          URL: ${{ secrets.PAINEL_AQUECER_URL }}
